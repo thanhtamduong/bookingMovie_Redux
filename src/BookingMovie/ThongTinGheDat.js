@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { huyGheAction } from "../redux/reducer/actions/DatVeActions";
 
 class ThongTinGheDat extends Component {
   render() {
@@ -21,12 +23,41 @@ class ThongTinGheDat extends Component {
                 <th>Huỷ</th>
               </tr>
             </thead>
-            <tbody>
+            <tfoot>
               <tr>
-                <th>Tổng tiền</th>
-                <th className="text-warning">1000000000</th>
-                <th></th>
+                <td></td>
+                <td>Tổng tiền</td>
+                <td className="text-warning font-weight-bold">
+                  {this.props.danhSachGheDangDat.reduce(
+                    (tongTien, gheDangDat, index) => {
+                      return (tongTien += gheDangDat.gia);
+                    },
+                    0
+                  )}
+                </td>
               </tr>
+            </tfoot>
+            <tbody>
+              {this.props.danhSachGheDangDat.map((gheDangDat, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{gheDangDat.soGhe}</td>
+                    <td className="text-warning font-weight-bold ">
+                      {gheDangDat.gia}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => {
+                          this.props.dispatch(huyGheAction(gheDangDat.soGhe));
+                        }}
+                      >
+                        Huỷ
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -34,4 +65,9 @@ class ThongTinGheDat extends Component {
     );
   }
 }
-export default ThongTinGheDat;
+const mapStateToProps = (state) => {
+  return {
+    danhSachGheDangDat: state.DatVeReducer.danhSachGheDangDat,
+  };
+};
+export default connect(mapStateToProps)(ThongTinGheDat);

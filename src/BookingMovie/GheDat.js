@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { datGheAction } from "../redux/reducer/actions/DatVeActions";
 
 class GheDat extends Component {
   renderGhe = () => {
@@ -9,12 +11,23 @@ class GheDat extends Component {
         cssGheDaDat = "gheDuocChon";
         disabled = true;
       }
+
+      let cssGheDangDat = "";
+      let indexGheDangDat = this.props.danhSachGheDangDat.findIndex(
+        (gheDangDat) => gheDangDat.soGhe === ghe.soGhe
+      );
+      if (indexGheDangDat !== -1) {
+        cssGheDangDat = "gheDangChon";
+      }
+
       return (
         <button
-          onClick={() => {}}
+          onClick={() => {
+            this.props.datGhe(ghe);
+          }}
           disabled={disabled}
           key={{ index }}
-          className={`ghe ${cssGheDaDat}`}
+          className={`ghe ${cssGheDaDat} ${cssGheDangDat}`}
         >
           {ghe.soGhe}
         </button>
@@ -57,4 +70,18 @@ class GheDat extends Component {
     );
   }
 }
-export default GheDat;
+
+const mapStateToProps = (state) => {
+  return {
+    danhSachGheDangDat: state.DatVeReducer.danhSachGheDangDat,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    datGhe: (ghe) => {
+      dispatch(datGheAction(ghe));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GheDat);
